@@ -5,12 +5,10 @@ required:
   - meta
 properties:
   data:
-    description: Dados primários da requisição.
     type: object
     properties:
       brand:
         $ref: ./SharedAutomatedTellerMachinesBrand.yaml
-        description: Organização controladora do grupo de instituições financeiras.
   links:
     $ref: ./Links.yaml
   meta:

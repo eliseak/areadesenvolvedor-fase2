@@ -8,9 +8,9 @@ required:
   - maximum
 properties:
   name:
-    "$ref": "./enum/EnumPriorityServiceName.yaml"
+    "$ref": "./PriorityServiceName.yaml"
   code:
-    "$ref": "./enum/EnumAccountPriorityServiceCode.yaml"
+    "$ref": "./AccountPriorityServiceCode.yaml"
   chargingTriggerInfo:
     type: string
     maxLength: 2000

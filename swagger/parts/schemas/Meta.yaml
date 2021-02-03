@@ -1,5 +1,4 @@
 type: object
-descripion: Meta informações referente a API requisitada.
 properties:
   totalRecords:
     type: integer

@@ -1,0 +1,28 @@
+type: object
+description: Agrupador das informações relativas às Transações de crédito e débito realizadas e autorizadas
+required:
+  - requestDateTime
+  - updateDateTime
+  - completedTransactions
+  - authorisedPayments
+properties:
+  requestDateTime:
+      allOf:  
+      - $ref: '../common_field_types/AccountsDateTimeString.yaml'
+      description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'    
+  updateDateTime:
+      allOf:  
+      - $ref: '../common_field_types/AccountsDateTimeString.yaml'
+      description: 'Data e hora da atualização, conforme especificação RFC-3339.'
+  completedTransactions:
+    type: array
+    items:
+      $ref: './AccountTransactionsCompleted.yaml'
+    minItems: 1
+    description: Lista das transações a débito e a crédito efetivadas em conta.
+  authorisedPayments:
+    type: array
+    items:
+      $ref: './AccountTransactionsAuthorisedPayment.yaml'
+    minItems: 1
+    description: Lista das Informações relativas aos pagamentos autorizados.

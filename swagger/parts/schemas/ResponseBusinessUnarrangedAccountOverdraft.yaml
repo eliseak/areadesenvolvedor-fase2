@@ -6,13 +6,11 @@ required:
 properties:
   data:
     type: object
-    description: Dados primários da requisição.
     required:
       - brand
     properties:
       brand:
         $ref: ./BusinessUnarrangedAccountOverdraftBrand.yaml
-        description: Organização titular das dependências.
   links:
     $ref: ./Links.yaml
   meta:

@@ -35,7 +35,6 @@ paths:
                 properties:
                   data:
                     type: object
-                    description: Dados primários da requisição.
                     required:
                       - brand
                     properties:
@@ -69,11 +68,17 @@ paths:
                                 - contractors
                               properties:
                                 name:
+                                  description: 'Nome da Instituição, pertencente à Marca, responsável pelo Cadastro.'
                                   type: string
-                                  maxLength: 80
                                   pattern: \w*\W*
-                                  description: 'Nome da Instituição, pertencente à marca, responsável pelo Correspondente Bancário no país.'
+                                  maxLength: 80
                                   example: Empresa da Organização A
+                                cnpjNumber:
+                                  description: 'Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara'
+                                  type: string
+                                  pattern: '^(\d{14})$|^NA$'
+                                  maxLength: 14
+                                  example: '50685362000135'
                                 contractors:
                                   type: array
                                   items:
@@ -86,6 +91,12 @@ paths:
                                         type: string
                                         maxLength: 100
                                         pattern: \w*\W*
+                                      cnpjNumber:
+                                        description: 'Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara'
+                                        type: string
+                                        pattern: '^(\d{14})$|^NA$'
+                                        maxLength: 14
+                                        example: '50685362000135'
                                       bankingAgents:
                                         type: array
                                         items:
@@ -98,7 +109,16 @@ paths:
                                             identification:
                                               description: Dados de identificação do correspondente.
                                               type: object
+                                              required:
+                                                - cnpjNumber
+                                                - corporationName
                                               properties:
+                                                cnpjNumber:
+                                                  description: 'Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara'
+                                                  type: string
+                                                  pattern: '^(\d{14})$|^NA$'
+                                                  maxLength: 14
+                                                  example: '50685362000135'
                                                 corporationName:
                                                   type: string
                                                   maxLength: 100
@@ -108,13 +128,8 @@ paths:
                                                   maxLength: 100
                                                   pattern: \w*\W*
                                                 isUnderestablishment:
-                                                  type: boolean
                                                   description: Indicador do Correspondente Bancário ser um Substabelecimento (são empresas  que foram contratadas por um correspondente bancário para prestar serviços. A empresa substabelecida é tratada como um correspondente do banco e tem praticamente os mesmos direitos e obrigações que possui o correspondente direto)
-                                              allOf:
-                                                - $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/allOf/0'
-                                              required:
-                                                - cnpjNumber
-                                                - corporationName
+                                                  type: boolean
                                             locations:
                                               type: array
                                               items:
@@ -154,16 +169,15 @@ paths:
                                                                 - SABADO
                                                               description: Dia da semana de abertura
                                                             openingTime:
-                                                              description: Horário de abertura (UTC)
                                                               type: string
+                                                              description: Horário de abertura (UTC)
                                                               maxLength: 13
-                                                              pattern: '^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
-                                                              example:
-                                                                - '10:20:30Z'
-                                                                - '16:00:57Z'
+                                                              pattern: '^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)|Z$'
                                                             closingTime:
-                                                              $ref: '#/paths/~1banking-agents/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/properties/contractors/items/properties/bankingAgents/items/properties/locations/items/properties/availability/properties/standards/items/properties/openingTime'
+                                                              type: string
                                                               description: Horário de fechamento (UTC)
+                                                              maxLength: 13
+                                                              pattern: '^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)|Z$'
                                                       exception:
                                                         type: string
                                                         maxLength: 2000
@@ -232,12 +246,8 @@ paths:
                                               maxItems: 20
                                         minItems: 1
                                         maxItems: 20
-                                    allOf:
-                                      - $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/allOf/0'
                                   minItems: 1
                                   description: Relação de informações de um contratante do serviço de correspondente.
-                              allOf:
-                                - $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/allOf/0'
                             minItems: 1
                             description: Lista de instituições pertencentes à marca.
                   links:
@@ -250,10 +260,10 @@ paths:
                       name: Organização A
                       companies:
                         - name: Empresa A1
-                          cnpjNumber: '45086338000178'
+                          cnpjNumber: 45086338000178
                           contractors:
                             - name: Empresa Contratante 1
-                              cnpjNumber: '99558332000137'
+                              cnpjNumber: 99558332000137
                               bankingAgents:
                                 - identification:
                                     corporationName: Empresa Correspondente A
@@ -266,23 +276,23 @@ paths:
                                         districtName: Centro
                                         townName: Marília
                                         countrySubDivision: SP
-                                        postCode: '17500001'
+                                        postCode: 17500001
                                         additionalInfo: Loja B.
-                                        ibgeCode: '3550308'
+                                        ibgeCode: 3550308
                                         country: Brasil
                                         countryCode: BRA
                                         geographicCoordinates:
-                                          latitude: '-90.8365180'
-                                          longitude: '-180.836519'
+                                          latitude: -90.836518
+                                          longitude: -180.836519
                                       phones:
                                         - type: FIXO
-                                          countryCallingCode: '55'
-                                          areaCode: '14'
-                                          number: '35721199'
+                                          countryCallingCode: 55
+                                          areaCode: 14
+                                          number: 35721199
                                         - type: MOVEL
-                                          countryCallingCode: '55'
-                                          areaCode: '14'
-                                          number: '997865532'
+                                          countryCallingCode: 55
+                                          areaCode: 14
+                                          number: 997865532
                                       availability:
                                         standards:
                                           - weekday: SEGUNDA_FEIRA
@@ -307,19 +317,19 @@ paths:
                                         districtName: Altos da Colina
                                         townName: Marília
                                         countrySubDivision: SP
-                                        postCode: '17526760'
+                                        postCode: 17526760
                                         additionalInfo: Loja 2.
-                                        ibgeCode: '3550308'
+                                        ibgeCode: 3550308
                                         country: Brasil
                                         countryCode: BRA
                                         geographicCoordinates:
-                                          latitude: '-90.8365180'
-                                          longitude: '-180.836519'
+                                          latitude: -90.836518
+                                          longitude: -180.836519
                                       phones:
                                         - type: FIXO
-                                          countryCallingCode: '55'
-                                          areaCode: '14'
-                                          number: '64721199'
+                                          countryCallingCode: 55
+                                          areaCode: 14
+                                          number: 64721199
                                       availability:
                                         standards:
                                           - weekday: SEGUNDA_FEIRA
@@ -344,14 +354,14 @@ paths:
                                         districtName: Centro
                                         townName: Marília
                                         countrySubDivision: SP
-                                        postCode: '17500001'
+                                        postCode: 17500001
                                         additionalInfo: Loja B.
-                                        ibgeCode: '3550308'
+                                        ibgeCode: 3550308
                                         country: Brasil
                                         countryCode: BRA
                                         geographicCoordinates:
-                                          latitude: '-90.8365180'
-                                          longitude: '-180.836519'
+                                          latitude: -90.836518
+                                          longitude: -180.836519
                                       availability:
                                         standards:
                                           - weekday: SEGUNDA_FEIRA
@@ -384,8 +394,8 @@ paths:
                   links:
                     self: 'https://api.banco.com.br/open-banking/channels/v1/banking-agents'
                     first: 'https://api.banco.com.br/open-banking/channels/v1/banking-agents'
-                    prev: 'null'
-                    next: 'null'
+                    prev: null
+                    next: null
                     last: 'https://api.banco.com.br/open-banking/channels/v1/banking-agents'
                   meta:
                     totalRecords: 1
@@ -426,7 +436,6 @@ paths:
                 properties:
                   data:
                     type: object
-                    description: Dados primários da requisição.
                     required:
                       - brand
                     properties:
@@ -450,23 +459,25 @@ paths:
                                 - cnpjNumber
                               properties:
                                 name:
+                                  description: 'Nome da Instituição, pertencente à Marca, responsável pelo Cadastro.'
                                   type: string
+                                  pattern: \w*\W*
                                   maxLength: 80
-                                  pattern: \w*\W*
+                                  example: Empresa da Organização A
                                 cnpjNumber:
+                                  description: 'Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara'
                                   type: string
-                                  minLength: 14
-                                  maxLength: 14
                                   pattern: '^(\d{14})$|^NA$'
-                                  description: |
-                                    Número completo do CNPJ da instituição responsável pela dependência - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica.
-                                    Deve-se ter apenas os números do CNPJ, sem máscara
-                                  example: '45086338000178'
+                                  maxLength: 14
+                                  example: '50685362000135'
                                 urlComplementaryList:
+                                  description: |
+                                    URL do link que conterá a lista complementar com os nomes e CNPJs agrupados sob o mesmo cnpjNumber. Os contidos nessa lista possuem as mesmas características para produtos e serviços. Endereço eletrônico de acesso ao canal. Será obrigatoriamente preenchido se houver lista complementar com os nomes e CNPJs a ser disponibilizada.
+                                    Restrição: Será obrigatorimente preenchido se houver lista complementar com os nomes e CNPJs a ser disponibilizada
                                   type: string
-                                  maxLength: 1024
                                   pattern: \w*\W*
-                                  example: 'https://example.com/mobile-banking'
+                                  maxLength: 1024
+                                  example: 'https://empresadaorganizacaoa.com/complementarylist'
                                 branches:
                                   type: array
                                   items:
@@ -572,8 +583,9 @@ paths:
                                               ibgeCode:
                                                 type: string
                                                 description: Código IBGE do município
-                                                pattern: '^(\d{7})$'
-                                                example: '3550308'
+                                                maxLength: 7
+                                                pattern: '^\d{7}$'
+                                                example: 3515890
                                               countrySubDivision:
                                                 type: string
                                                 description: 'Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. ''AC''. São consideradas apenas as siglas para os estados brasileiros'
@@ -611,7 +623,7 @@ paths:
                                                 description: Código de Endereçamento Postal
                                                 pattern: '(\d{8}|^NA$)'
                                                 maxLength: 8
-                                                example: '17500001'
+                                                example: 17500001
                                               country:
                                                 type: string
                                                 description: Nome do país
@@ -623,22 +635,7 @@ paths:
                                                 description: Código do país
                                                 example: BRA
                                               geographicCoordinates:
-                                                type: object
-                                                description: |
-                                                  Objeto agrupador das informações que compõem as Coordenadas geográficas: latitude e longitude
-                                                properties:
-                                                  latitude:
-                                                    description: Informação da latitude referente a geolocalização informada.
-                                                    type: string
-                                                    pattern: '^-?\d{1,2}\.\d{1,9}$'
-                                                    maxLength: 13
-                                                    example: '-90.8365180'
-                                                  longitude:
-                                                    description: Informação da longitude referente a geolocalização informada.
-                                                    type: string
-                                                    pattern: '^-?\d{1,3}\.\d{1,8}$'
-                                                    maxLength: 13
-                                                    example: '-180.836519'
+                                                $ref: '#/paths/~1shared-automated-teller-machines/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/properties/sharedAutomatedTellerMachines/items/properties/postalAddress/properties/geographicCoordinates'
                                       availability:
                                         type: object
                                         properties:
@@ -659,17 +656,15 @@ paths:
                                                     - SABADO
                                                   description: Dia da semana de abertura da dependência bancária
                                                 openingTime:
-                                                  description: Horário de abertura da dependência bancária (UTC)
                                                   type: string
+                                                  description: Horário de abertura da dependência bancária (UTC)
                                                   maxLength: 13
-                                                  pattern: '^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$'
-                                                  example:
-                                                    - '10:20:30Z'
-                                                    - '16:00:57Z'
-                                                    - NA
+                                                  pattern: '^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)|Z$|^NA$'
                                                 closingTime:
-                                                  $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/properties/branches/items/properties/availability/properties/standards/items/properties/openingTime'
+                                                  type: string
                                                   description: Horário de fechamento da dependência bancária (UTC)
+                                                  maxLength: 13
+                                                  pattern: '^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)|Z$|^NA$'
                                               required:
                                                 - weekday
                                                 - openingTime
@@ -706,20 +701,20 @@ paths:
                                                 countryCallingCode:
                                                   type: string
                                                   maxLength: 4
-                                                  pattern: '^\d{1,4}$'
-                                                  example: '55'
+                                                  pattern: '^\d{2,4}$'
+                                                  example: 55
                                                   description: Número de DDI (Discagem Direta Internacional) para  telefone de acesso ao Canal - se houver. p.ex. '55'
                                                 areaCode:
                                                   type: string
                                                   maxLength: 2
                                                   pattern: '^\d{2}$'
-                                                  example: '19'
+                                                  example: 19
                                                   description: Número de DDD (Discagem Direta à Distância) do telefone da dependência - se houver. p.ex. '19'
                                                 number:
                                                   type: string
                                                   maxLength: 11
                                                   pattern: '^([0-9]{8,11})$'
-                                                  example: '35721199'
+                                                  example: 35721199
                                                   description: Número de telefone da dependência - se houver
                                         description: Lista de telefones da Dependência
                                       services:
@@ -788,20 +783,10 @@ paths:
                                         maxItems: 20
                                   minItems: 1
                                   description: Lista de Dependências de uma Instituição
-                              allOf:
-                                - type: object
-                                  properties:
-                                    cnpjNumber:
-                                      type: string
-                                      pattern: '^(\d{14})$|^NA$'
-                                      description: Número completo do CNPJ da instituição
-                                      maxLength: 14
-                                      example: '50685362000135'
                             minItems: 1
                             description: Companies traz uma lista de todas as instuituições da Marca.
                   links:
                     type: object
-                    description: Referências para outros recusos da API requisitada.
                     properties:
                       self:
                         type: string
@@ -814,16 +799,17 @@ paths:
                       prev:
                         type: string
                         description: URL da página anterior de registros
+                        nullable: true
                       next:
                         type: string
                         description: URL da próxima página de registros
+                        nullable: true
                       last:
                         type: string
                         description: URL da última página de registros
                         example: 'https://api.banco.com.br/open-banking/<api>/v1/<resource>'
                   meta:
                     type: object
-                    descripion: Meta informações referente a API requisitada.
                     properties:
                       totalRecords:
                         type: integer
@@ -842,30 +828,30 @@ paths:
                       name: Organização A
                       companies:
                         - name: Empresa A1
-                          cnpjNumber: '45086338000178'
+                          cnpjNumber: 45086338000178
                           urlComplementaryList: 'https://empresaa1.com/branches-banking'
                           branches:
                             - identification:
                                 type: AGENCIA
-                                code: '0001'
-                                checkDigit: '9'
+                                code: 1
+                                checkDigit: 9
                                 name: Marília
-                                cnpjNumber: '45086338000458'
-                                relatedBranch: '0001'
-                                openingDate: '2010-01-02'
+                                cnpjNumber: 45086338000458
+                                relatedBranch: 1
+                                openingDate: 2010-01-02T00:00:00.000Z
                               postalAddress:
                                 address: 'Av Naburo Ykesaki, 1270'
                                 additionalInfo: Loja B
                                 districtName: Centro
                                 townName: Marília
-                                ibgeCode: '3550308'
+                                ibgeCode: 3550308
                                 countrySubDivision: SP
                                 postCode: 17500-001
                                 country: Brasil
                                 countryCode: BRA
                                 geographicCoordinates:
-                                  latitude: '-90.8365180'
-                                  longitude: '-180.836519'
+                                  latitude: -90.836518
+                                  longitude: -180.836519
                               availability:
                                 standards:
                                   - weekday: SEGUNDA_FEIRA
@@ -887,13 +873,13 @@ paths:
                                 isPublicAccessAllowed: true
                               phones:
                                 - type: FIXO
-                                  countryCallingCode: '55'
-                                  areaCode: '14'
-                                  number: '35721199'
+                                  countryCallingCode: 55
+                                  areaCode: 14
+                                  number: 35721199
                                 - type: MOVEL
-                                  countryCallingCode: '55'
-                                  areaCode: '14'
-                                  number: '997865532'
+                                  countryCallingCode: 55
+                                  areaCode: 14
+                                  number: 997865532
                               services:
                                 - name: RECEBIMENTOS_PAGAMENTOS_QUALQUER_NATUREZA
                                   code: RECEBE_PAGA_QUALQUER_NATUREZA
@@ -903,8 +889,8 @@ paths:
                   links:
                     self: 'https://api.banco.com.br/open-banking/channels/v1/branches'
                     first: 'https://api.banco.com.br/open-banking/channels/v1/branches'
-                    prev: 'null'
-                    next: 'null'
+                    prev: null
+                    next: null
                     last: 'https://api.banco.com.br/open-banking/channels/v1/branches'
                   meta:
                     totalRecords: 1
@@ -933,12 +919,10 @@ paths:
                 properties:
                   data:
                     type: object
-                    description: Dados primários da requisição.
                     required:
                       - brand
                     properties:
                       brand:
-                        description: Organização controladora do grupo de instituições financeiras.
                         type: object
                         required:
                           - name
@@ -960,16 +944,25 @@ paths:
                                 - cnpjNumber
                               properties:
                                 name:
+                                  description: 'Nome da Instituição, pertencente à Marca, responsável pelo Cadastro.'
                                   type: string
-                                  description: Nome da marca selecionada pela Organização proprietária da dependência (titular).
-                                  example: Empresa da Marca A
+                                  pattern: \w*\W*
                                   maxLength: 80
-                                  pattern: \w*\W*
-                                urlComplementaryList:
+                                  example: Empresa da Organização A
+                                cnpjNumber:
+                                  description: 'Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara'
                                   type: string
-                                  maxLength: 1024
+                                  pattern: '^(\d{14})$|^NA$'
+                                  maxLength: 14
+                                  example: '50685362000135'
+                                urlComplementaryList:
+                                  description: |
+                                    URL do link que conterá a lista complementar com os nomes e CNPJs agrupados sob o mesmo cnpjNumber. Os contidos nessa lista possuem as mesmas características para produtos e serviços. Endereço eletrônico de acesso ao canal. Será obrigatoriamente preenchido se houver lista complementar com os nomes e CNPJs a ser disponibilizada.
+                                    Restrição: Será obrigatorimente preenchido se houver lista complementar com os nomes e CNPJs a ser disponibilizada
+                                  type: string
                                   pattern: \w*\W*
-                                  example: 'https://example.com/mobile-banking'
+                                  maxLength: 1024
+                                  example: 'https://empresadaorganizacaoa.com/complementarylist'
                                 electronicChannels:
                                   type: array
                                   items:
@@ -1080,8 +1073,6 @@ paths:
                                   minItems: 1
                                   maxItems: 4
                                   description: Lista  de canais de atendimento eltrônico
-                              allOf:
-                                - $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/allOf/0'
                             minItems: 1
                             description: Lista de instituições pertencentes à marca
                   links:
@@ -1094,7 +1085,7 @@ paths:
                       name: Organização A
                       companies:
                         - name: Empresa A1
-                          cnpjNumber: '45086338000178'
+                          cnpjNumber: 45086338000178
                           urlComplementaryList: 'https://empresaa1.com/branches-banking'
                           electronicChannels:
                             - identification:
@@ -1125,7 +1116,7 @@ paths:
                                 urls:
                                   - 'https://empresaa1.com/channels-chat1'
                                   - 'https://empresaa1.com/channels-chat2'
-                              services:
+                              services":
                                 - name: SEGUROS
                                   code: SEGUROS
                                 - name: APLICACOES_RESGATES_INVESTIMENTOS
@@ -1135,8 +1126,8 @@ paths:
                   links:
                     self: 'https://api.banco.com.br/open-banking/channels/v1/electronic-channels'
                     first: 'https://api.banco.com.br/open-banking/channels/v1/electronic-channels'
-                    prev: 'null'
-                    next: 'null'
+                    prev: null
+                    next: null
                     last: 'https://api.banco.com.br/open-banking/channels/v1/electronic-channels'
                   meta:
                     totalRecords: 1
@@ -1165,12 +1156,10 @@ paths:
                 properties:
                   data:
                     type: object
-                    description: Dados primários da requisição.
                     required:
                       - brand
                     properties:
                       brand:
-                        description: Organização controladora do grupo de instituições financeiras.
                         type: object
                         required:
                           - name
@@ -1192,17 +1181,25 @@ paths:
                                 - cnpjNumber
                               properties:
                                 name:
+                                  description: 'Nome da Instituição, pertencente à Marca, responsável pelo Cadastro.'
                                   type: string
                                   pattern: \w*\W*
                                   maxLength: 80
-                                  description: 'Nome da Instituição, pertencente à organização, responsável pelo Canal Telefônico.'
-                                  example: Empresa da Marca A
+                                  example: Empresa da Organização A
+                                cnpjNumber:
+                                  description: 'Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara'
+                                  type: string
+                                  pattern: '^(\d{14})$|^NA$'
+                                  maxLength: 14
+                                  example: '50685362000135'
                                 urlComplementaryList:
+                                  description: |
+                                    URL do link que conterá a lista complementar com os nomes e CNPJs agrupados sob o mesmo cnpjNumber. Os contidos nessa lista possuem as mesmas características para produtos e serviços. Endereço eletrônico de acesso ao canal. Será obrigatoriamente preenchido se houver lista complementar com os nomes e CNPJs a ser disponibilizada.
+                                    Restrição: Será obrigatorimente preenchido se houver lista complementar com os nomes e CNPJs a ser disponibilizada
                                   type: string
                                   pattern: \w*\W*
                                   maxLength: 1024
-                                  example: 'https://example.com/mobile-banking'
-                                  description: URL do link que conterá a lista complementar com os nomes e CNPJs agrupados sob o mesmo cnpjNumber.
+                                  example: 'https://empresadaorganizacaoa.com/complementarylist'
                                 phoneChannels:
                                   type: array
                                   items:
@@ -1244,14 +1241,14 @@ paths:
                                                 countryCallingCode:
                                                   type: string
                                                   maxLength: 4
-                                                  pattern: '^\d{1,4}$|^NA$'
-                                                  example: '55'
+                                                  pattern: '^\d{2,4}$|^NA$'
+                                                  example: 55
                                                   description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver.
                                                 areaCode:
                                                   type: string
                                                   maxLength: 2
                                                   pattern: '^\d{2}$|^NA$'
-                                                  example: '19'
+                                                  example: 19
                                                   description: Número de DDD (Discagem Direta à Distância) para telefone de acesso ao Canal - se houver.
                                                 number:
                                                   type: string
@@ -1264,7 +1261,6 @@ paths:
                                                   maxLength: 300
                                                   pattern: \w*\W*
                                                   example: Mensagem complementar necessária para o agrupamento da identificação do telefone.
-                                                  description: Mensagem complementar necessária para o agrupamento da identificação do telefone.
                                             minItems: 1
                                             description: Lista de telefones do Canal de Atendimento
                                       services:
@@ -1336,8 +1332,6 @@ paths:
                                       - services
                                   minItems: 1
                                   description: Lista  de canais de atendimento telefônico
-                              allOf:
-                                - $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/allOf/0'
                             minItems: 1
                             description: Lista de instituições pertencentes à marca
                   links:
@@ -1350,19 +1344,19 @@ paths:
                       name: Organização A
                       companies:
                         - name: Empresa A1
-                          cnpjNumber: '45086338000178'
+                          cnpjNumber: 45086338000178
                           urlComplementaryList: 'https://empresaa1.com/branches-banking'
                           phoneChannels:
                             - identification:
                                 type: CENTRAL_TELEFONICA
                                 phones:
-                                  - countryCallingCode: '55'
-                                    areaCode: '14'
-                                    number: '35721199'
+                                  - countryCallingCode: 55
+                                    areaCode: 14
+                                    number: 35721199
                                     additionalInfo: NA
-                                  - countryCallingCode: '55'
-                                    areaCode: '14'
-                                    number: '997865532'
+                                  - countryCallingCode: 55
+                                    areaCode: 14
+                                    number: 997865532
                                     additionalInfo: NA
                               services:
                                 - name: ABERTURA_CONTAS_DEPOSITOS_OU_PAGAMENTO_PRE_PAGA
@@ -1433,8 +1427,8 @@ paths:
                   links:
                     self: 'https://api.banco.com.br/open-banking/channels/v1/phone-channels'
                     first: 'https://api.banco.com.br/open-banking/channels/v1/phone-channels'
-                    prev: 'null'
-                    next: 'null'
+                    prev: null
+                    next: null
                     last: 'https://api.banco.com.br/open-banking/channels/v1/phone-channels'
                   meta:
                     totalRecords: 1
@@ -1462,11 +1456,9 @@ paths:
                   - meta
                 properties:
                   data:
-                    description: Dados primários da requisição.
                     type: object
                     properties:
                       brand:
-                        description: Organização controladora do grupo de instituições financeiras.
                         type: object
                         allOf:
                           - $ref: '#/paths/~1banking-agents/get/responses/200/content/application~1json/schema/properties/data/properties/brand/allOf/0'
@@ -1477,12 +1469,10 @@ paths:
                               properties:
                                 sharedAutomatedTellerMachines:
                                   type: array
-                                  description: Companies traz uma lista de todas as intuituições da Marca.
                                   items:
                                     type: object
                                     properties:
                                       identification:
-                                        description: Nome do proprietário do terminal de Autoatendimento Compartilhado.
                                         type: object
                                         properties:
                                           ownerName:
@@ -1492,7 +1482,6 @@ paths:
                                             description: Nome do proprietário do terminal de Autoatendimento Compartilhado
                                             example: João da Silva Santos
                                       postalAddress:
-                                        description: Deverá trazer o endereço completo referente à localização do Terminal de Autoatendimento.
                                         type: object
                                         properties:
                                           address:
@@ -1504,7 +1493,7 @@ paths:
                                             example: 'Av Naburo Ykesaki, 1270'
                                           additionalInfo:
                                             type: string
-                                            description: Alguns logradouros ainda necessitam ser especificados por meio de complemento
+                                            description: Complemento
                                             maxLength: 30
                                             pattern: \w*\W*
                                             example: Fundos
@@ -1524,10 +1513,10 @@ paths:
                                             example: Marília
                                           ibgeCode:
                                             type: string
-                                            description: 'Código IBGE de Município. A Tabela de Códigos de Municípios do IBGE apresenta a lista os municípios brasileiros associados a um código composto de 7 dígitos, sendo os dois primeiros referentes ao código da Unidade da Federação.'
+                                            description: Código IBGE do município
                                             maxLength: 7
                                             pattern: '\d{7}'
-                                            example: '3515890'
+                                            example: 3515890
                                           countrySubDivision:
                                             type: string
                                             description: 'Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. ''AC''. São consideradas apenas as siglas para os estados brasileiros'
@@ -1562,10 +1551,10 @@ paths:
                                             example: SP
                                           postCode:
                                             type: string
-                                            description: 'Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios'
+                                            description: Código de Endereçamento Postal
                                             pattern: '(\d{8})|^NA$'
                                             maxLength: 8
-                                            example: '17500001'
+                                            example: 17500001
                                           country:
                                             type: string
                                             description: Nome do país
@@ -1574,19 +1563,31 @@ paths:
                                             example: Brasil
                                           countryCode:
                                             type: string
-                                            description: Código do pais de acordo com o código “alpha3” do ISO-3166.
+                                            description: Código do país
                                             example: BRA
                                           geographicCoordinates:
-                                            $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/properties/branches/items/properties/postalAddresses/allOf/0/properties/geographicCoordinates'
-                                            description: 'Objeto agrupador das informações, que correspondem aos valores das coordenadas geográficas em graus decimais, no Sistema de referência WGS84'
+                                            type: object
+                                            description: |
+                                              Objeto agrupador das informações que compõem as Coordenadas geográficas: latitude e longitude
+                                            properties:
+                                              latitude:
+                                                description: Informação da latitude referente a geolocalização informada.
+                                                type: string
+                                                pattern: '^-?\d{1,2}\.\d{1,9}$'
+                                                maxLength: 13
+                                                example: -90.836518
+                                              longitude:
+                                                description: Informação da longitude referente a geolocalização informada.
+                                                type: string
+                                                pattern: '^-?\d{1,3}\.\d{1,8}$'
+                                                maxLength: 13
+                                                example: -180.836519
                                       availability:
-                                        description: Relação da disponbilidade de atendimento padrão por dias da semana.
                                         type: object
                                         properties:
                                           standards:
                                             type: array
                                             maxItems: 20
-                                            description: Relação da disponbilidade de atendimento padrão por dias da semana
                                             items:
                                               properties:
                                                 weekday:
@@ -1602,21 +1603,25 @@ paths:
                                                   description: Dia da semana de abertura
                                                   example: SEGUNDA_FEIRA
                                                 openingTime:
-                                                  $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/properties/branches/items/properties/availability/properties/standards/items/properties/openingTime'
+                                                  type: string
                                                   description: Horário de abertura (UTC)
+                                                  maxLength: 13
+                                                  pattern: '^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)|Z$|^NA$'
+                                                  example: '10:00:57Z'
                                                 closingTime:
-                                                  $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/data/properties/brand/properties/companies/items/properties/branches/items/properties/availability/properties/standards/items/properties/openingTime'
+                                                  type: string
                                                   description: Horário de fechamento (UTC)
+                                                  maxLength: 13
+                                                  pattern: '^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)|Z$|^NA$'
+                                                  example: '16:00:57Z'
                                           exception:
                                             type: string
                                             maxLength: 2000
                                             pattern: \w*\W*
                                             example: 'Exceto feriados municipais, nacionais e estaduais'
-                                            description: Em campo texto devem ser registradas todas as Exceções para o não atendimento.
                                           isPublicAccessAllowed:
                                             type: boolean
                                             example: false
-                                            description: 'Indica se o Terminal de Autoatendimento Compartilhado disponibiliza acesso restrito ou  irrestrito, atendendo ao público em geral.'
                                       services:
                                         type: array
                                         maxItems: 20
@@ -1683,7 +1688,6 @@ paths:
                                               pattern: \w*\W*
                                               description: 'Texto livre para complementar informação relativa ao Serviço disponível, quando for preenchida a opção ''OUTROS_PRODUTOS_SERVICOS'''
                                               example: Serviços complementares de atendimento via terminais de autoatendimento.
-                                        description: Traz a relação de serviços disponbilizados pelo Canal de Atendimento.
                               allOf:
                                 - type: object
                                   properties:
@@ -1705,7 +1709,7 @@ paths:
                                       pattern: '^(\d{14})$|^NA$'
                                       description: Número completo do CNPJ da instituição
                                       maxLength: 14
-                                      example: '50685362000135'
+                                      example: 50685362000135
                             description: Lista de instituições pertencentes à marca
                   links:
                     $ref: '#/paths/~1branches/get/responses/200/content/application~1json/schema/properties/links'

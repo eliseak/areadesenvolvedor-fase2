@@ -6,7 +6,7 @@ required:
   - customers
 properties:
   interval:
-    $ref: ./enum/EnumPriceIntervals.yaml
+    $ref: ./PriceIntervals.yaml
   value:
     type: string
     pattern: ^((\d{1,9}\.\d{2}){1}|NA)$
@@ -19,4 +19,3 @@ properties:
     $ref:  ./Currency.yaml
   customers:
     $ref: ./Customer.yaml
-    description: Percentual de clientes em cada faixa
